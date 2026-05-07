@@ -44,6 +44,10 @@ The mod does not depend on the truck's gearbox model or number of gears.
 - Real automatic users may need to bind Drive and Reverse separately in ETS2.
 - H-shifter/manual users should merge the scroll steering/throttle/brake bindings into their own controls profile instead of replacing it.
 
+## Feedback
+
+Found a problem or have a suggestion? Open an issue on GitHub.
+
 ## License
 
 MIT License. See `LICENSE`.
