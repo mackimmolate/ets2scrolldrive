@@ -7,6 +7,15 @@ Mouse steering and scroll-wheel throttle/brake controls for Euro Truck Simulator
 - `controls.sii`: ETS2 controls profile.
 - `start_ets2_scroll_overlay.cmd`: optional overlay that shows the current throttle or brake percentage.
 
+## Installation
+
+1. Close ETS2.
+2. Open your ETS2 profile folder in `Documents\Euro Truck Simulator 2\profiles\<profile id>` or `Documents\Euro Truck Simulator 2\steam_profiles\<profile id>`.
+3. Back up your existing `controls.sii`.
+4. Copy this `controls.sii` into the profile folder.
+
+The overlay `.cmd` file can be placed anywhere. It is self-contained and does not need to be inside the ETS2 profile folder.
+
 ## Controls
 
 - Move mouse: steer.
