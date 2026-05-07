@@ -28,7 +28,7 @@ using System.Windows.Forms;
 
 public sealed class Ets2ScrollOverlay : Form
 {
-    private const int StepPercent = 5;
+    private const int StepPercent = 3;
     private const int WH_MOUSE_LL = 14;
     private const int WM_MOUSEWHEEL = 0x020A;
     private const int WHEEL_DELTA = 120;

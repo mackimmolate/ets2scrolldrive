@@ -4,7 +4,7 @@ Mouse steering and scroll-wheel throttle/brake controls for Euro Truck Simulator
 
 ## Files
 
-- `controls.sii`: ETS2 controls profile.
+- `controls.sii`: ETS2 controls profile with 3% scroll steps.
 - `start_ets2_scroll_overlay.cmd`: optional overlay that shows the current throttle or brake percentage.
 
 ## Installation
@@ -30,7 +30,7 @@ The overlay `.cmd` file can be placed anywhere. It is self-contained and does no
 
 The scroll wheel value is stored by ETS2, not by the overlay. The overlay is only a display.
 
-Each wheel step changes the stored value by 5%, from full brake to full throttle. ETS2 applies a squared curve, so small scroll changes are gentle and full scroll range still reaches 100%.
+Each wheel step changes the stored value by 3%, from full brake to full throttle. ETS2 applies a squared curve, so small scroll changes are gentle and full scroll range still reaches 100%.
 
 If the overlay display and the in-game input ever disagree, press `Alt + middle mouse` to reset both to neutral.
 
