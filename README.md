@@ -21,6 +21,7 @@ The overlay `.cmd` file can be placed anywhere. It is self-contained and does no
 - Move mouse: steer.
 - Scroll up: increase throttle.
 - Scroll down: increase brake.
+- Hold right mouse: rotate the camera in cab view and external view.
 - Right mouse + scroll: camera zoom.
 - `Alt + middle mouse`: reset throttle/brake to neutral.
 - `Ctrl + Alt + Q`: close the overlay.
