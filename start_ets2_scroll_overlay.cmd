@@ -46,6 +46,8 @@ public sealed class Ets2ScrollOverlay : Form
     private readonly Font statusFont;
     private IntPtr mouseHook = IntPtr.Zero;
     private int scrollValue = 0;
+    private int savedThrottleValue = 0;
+    private bool altLatch = false;
     private string statusText = "Neutral 0%";
     private Color statusColor = Color.Gainsboro;
 
@@ -143,12 +145,21 @@ public sealed class Ets2ScrollOverlay : Form
             return;
         }
 
-        if (IsResetPressed())
+        bool ets2Active = IsEts2Foreground();
+        bool altDown = ets2Active && IsKeyDown(VK_MENU);
+        bool resetPressed = altDown && IsKeyDown(VK_MBUTTON);
+
+        if (resetPressed)
         {
-            ResetScrollValue();
+            ResetScrollState();
+        }
+        else if (altDown && !altLatch)
+        {
+            ToggleThrottleMemory();
         }
 
-        bool ets2Active = IsEts2Foreground();
+        altLatch = altDown;
+
         if (Visible != ets2Active)
         {
             Visible = ets2Active;
@@ -170,6 +181,7 @@ public sealed class Ets2ScrollOverlay : Form
             if (wheelSteps != 0)
             {
                 scrollValue = Clamp(scrollValue + (wheelSteps * StepPercent), -100, 100);
+                RememberThrottle();
                 BeginInvoke((Action)UpdateDisplay);
             }
         }
@@ -181,12 +193,12 @@ public sealed class Ets2ScrollOverlay : Form
     {
         if (scrollValue > 0)
         {
-            statusText = "Throttle " + CurvedPercentText(scrollValue) + "%";
+            statusText = "Throttle " + ThrottlePercentText(scrollValue) + "%";
             statusColor = Color.LimeGreen;
         }
         else if (scrollValue < 0)
         {
-            statusText = "Brake " + CurvedPercentText(scrollValue) + "%";
+            statusText = "Brake " + BrakePercentText(scrollValue) + "%";
             statusColor = Color.OrangeRed;
         }
         else
@@ -198,21 +210,51 @@ public sealed class Ets2ScrollOverlay : Form
         Invalidate();
     }
 
-    private void ResetScrollValue()
+    private void ToggleThrottleMemory()
     {
-        if (scrollValue == 0) return;
+        if (scrollValue > 0)
+        {
+            savedThrottleValue = scrollValue;
+            scrollValue = 0;
+        }
+        else
+        {
+            scrollValue = savedThrottleValue;
+        }
 
-        scrollValue = 0;
         UpdateDisplay();
     }
 
-    private static string CurvedPercentText(int value)
+    private void RememberThrottle()
+    {
+        if (scrollValue > 0)
+        {
+            savedThrottleValue = scrollValue;
+        }
+    }
+
+    private void ResetScrollState()
+    {
+        if (scrollValue == 0 && savedThrottleValue == 0) return;
+
+        scrollValue = 0;
+        savedThrottleValue = 0;
+        UpdateDisplay();
+    }
+
+    private static string ThrottlePercentText(int value)
     {
         int absoluteValue = Math.Abs(value);
         if (absoluteValue == 0) return "0";
 
         double curved = Math.Pow(absoluteValue / 100.0, 2.0) * 100.0;
         return curved.ToString("0.##", CultureInfo.InvariantCulture);
+    }
+
+    private static string BrakePercentText(int value)
+    {
+        int absoluteValue = Math.Abs(value);
+        return absoluteValue.ToString(CultureInfo.InvariantCulture);
     }
 
     private static bool IsResetPressed()

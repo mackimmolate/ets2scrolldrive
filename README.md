@@ -21,18 +21,21 @@ The overlay `.cmd` file can be placed anywhere. It is self-contained and does no
 - Move mouse: steer.
 - Scroll up: increase throttle.
 - Scroll down: increase brake.
+- `Alt`: toggle neutral/coast and restore the last remembered throttle level.
 - Hold right mouse: rotate the camera in cab view and external view.
 - Right mouse + scroll: camera zoom.
-- `Alt + middle mouse`: reset throttle/brake to neutral.
+- `Alt + middle mouse`: full reset to neutral and forget the remembered throttle level.
 - `Ctrl + Alt + Q`: close the overlay.
 
 ## Behavior
 
-The scroll wheel value is stored by ETS2, not by the overlay. The overlay is only a display.
+The live scroll wheel value is stored by ETS2. The overlay mirrors the same logic so it can show the expected throttle, brake, or neutral state.
 
-Each wheel step changes the stored value by 3%, from full brake to full throttle. ETS2 applies a squared curve, so small scroll changes are gentle and full scroll range still reaches 100%.
+Each wheel step changes the stored value by 3%, from full brake to full throttle. Throttle uses a squared curve, so small scroll changes are gentle and full scroll range still reaches 100%. Brake is more direct: about 25% scroll gives about 25% brake, 50% gives about 50%, and full brake still takes the full scroll range.
 
-If the overlay display and the in-game input ever disagree, press `Alt + middle mouse` to reset both to neutral.
+Pressing `Alt` while throttling saves the current throttle level and switches to neutral/coast. From there you can scroll down into brake. Pressing `Alt` again restores the saved throttle level.
+
+If the overlay display and the in-game input ever disagree, press `Alt + middle mouse` to reset both to neutral and clear the saved throttle.
 
 Do not edit controls that show as `complex` in ETS2's buttons menu. Those are custom bindings from `controls.sii`, and changing them in-game can break the scroll controls.
 
