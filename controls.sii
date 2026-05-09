@@ -114,7 +114,7 @@ input_config : _nameless.261.33fc.0d30 {
  config_lines[108]: "mix ctr_shf_alt `any_ctrl & any_shift & any_alt & (! any_cmd)`"
  config_lines[109]: "mix cstm_mod_2 ``"
  config_lines[110]: "mix cstm_mod_4 ``"
- config_lines[111]: "mix cstm_mod_1 `sel((keyboard.lalt?0 | keyboard.ralt?0), 0.0, clamp(cstm_mod_1 + (((! mouse.button_right?0) & mouse.wheel_up?0) * 0.03) - (((! mouse.button_right?0) & mouse.wheel_down?0) * 0.03), -1.0, 1.0))`"
+ config_lines[111]: "mix cstm_mod_1 `sel(((keyboard.lalt?0 | keyboard.ralt?0) & mouse.button_middle?0), 0.0, clamp(cstm_mod_1 + (((! mouse.button_right?0) & mouse.wheel_up?0) * 0.03) - (((! mouse.button_right?0) & mouse.wheel_down?0) * 0.03), -1.0, 1.0))`"
  config_lines[112]: "mix cstm_mod_3 ``"
  config_lines[113]: "mix cstm_mod_5 ``"
  config_lines[114]: "mix cstm_mod_6 ``"
