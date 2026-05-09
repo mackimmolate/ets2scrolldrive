@@ -33,7 +33,6 @@ public sealed class Ets2ScrollOverlay : Form
     private const int WM_MOUSEWHEEL = 0x020A;
     private const int WHEEL_DELTA = 120;
     private const int VK_RBUTTON = 0x02;
-    private const int VK_MBUTTON = 0x04;
     private const int VK_CONTROL = 0x11;
     private const int VK_MENU = 0x12;
     private const int VK_Q = 0x51;
@@ -46,8 +45,6 @@ public sealed class Ets2ScrollOverlay : Form
     private readonly Font statusFont;
     private IntPtr mouseHook = IntPtr.Zero;
     private int scrollValue = 0;
-    private int savedThrottleValue = 0;
-    private bool altLatch = false;
     private string statusText = "Neutral 0%";
     private Color statusColor = Color.Gainsboro;
 
@@ -147,18 +144,11 @@ public sealed class Ets2ScrollOverlay : Form
 
         bool ets2Active = IsEts2Foreground();
         bool altDown = ets2Active && IsKeyDown(VK_MENU);
-        bool resetPressed = altDown && IsKeyDown(VK_MBUTTON);
 
-        if (resetPressed)
+        if (altDown)
         {
-            ResetScrollState();
+            ResetScrollValue();
         }
-        else if (altDown && !altLatch)
-        {
-            ToggleThrottleMemory();
-        }
-
-        altLatch = altDown;
 
         if (Visible != ets2Active)
         {
@@ -181,7 +171,6 @@ public sealed class Ets2ScrollOverlay : Form
             if (wheelSteps != 0)
             {
                 scrollValue = Clamp(scrollValue + (wheelSteps * StepPercent), -100, 100);
-                RememberThrottle();
                 BeginInvoke((Action)UpdateDisplay);
             }
         }
@@ -210,35 +199,11 @@ public sealed class Ets2ScrollOverlay : Form
         Invalidate();
     }
 
-    private void ToggleThrottleMemory()
+    private void ResetScrollValue()
     {
-        if (scrollValue > 0)
-        {
-            savedThrottleValue = scrollValue;
-            scrollValue = 0;
-        }
-        else
-        {
-            scrollValue = savedThrottleValue;
-        }
-
-        UpdateDisplay();
-    }
-
-    private void RememberThrottle()
-    {
-        if (scrollValue > 0)
-        {
-            savedThrottleValue = scrollValue;
-        }
-    }
-
-    private void ResetScrollState()
-    {
-        if (scrollValue == 0 && savedThrottleValue == 0) return;
+        if (scrollValue == 0) return;
 
         scrollValue = 0;
-        savedThrottleValue = 0;
         UpdateDisplay();
     }
 
@@ -259,7 +224,7 @@ public sealed class Ets2ScrollOverlay : Form
 
     private static bool IsResetPressed()
     {
-        return IsEts2Foreground() && IsKeyDown(VK_MENU) && IsKeyDown(VK_MBUTTON);
+        return IsEts2Foreground() && IsKeyDown(VK_MENU);
     }
 
     private void MoveToTopOfActiveScreen()
