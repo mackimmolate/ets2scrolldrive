@@ -48,8 +48,6 @@ public sealed class Ets2ScrollOverlay : Form
     private IntPtr mouseHook = IntPtr.Zero;
     private int scrollValue = 0;
     private bool altResetLatch = false;
-    private bool resetMiddleButtonDown = false;
-    private int resetMiddleButtonReleaseTick = 0;
     private string statusText = "Neutral 0%";
     private Color statusColor = Color.Gainsboro;
 
@@ -119,7 +117,6 @@ public sealed class Ets2ScrollOverlay : Form
             UnhookWindowsHookEx(mouseHook);
             mouseHook = IntPtr.Zero;
         }
-        ReleaseMiddleClickForEts2Reset();
         base.OnFormClosing(e);
     }
 
@@ -148,18 +145,13 @@ public sealed class Ets2ScrollOverlay : Form
             return;
         }
 
-        if (resetMiddleButtonDown && HasTickElapsed(resetMiddleButtonReleaseTick))
-        {
-            ReleaseMiddleClickForEts2Reset();
-        }
-
         bool ets2Active = IsEts2Foreground();
         bool altDown = ets2Active && IsKeyDown(VK_MENU);
 
         if (altDown && !altResetLatch)
         {
+            SendMiddleResetForEts2();
             ResetScrollValue();
-            PressMiddleClickForEts2Reset();
         }
         altResetLatch = altDown;
 
@@ -240,27 +232,12 @@ public sealed class Ets2ScrollOverlay : Form
         return IsEts2Foreground() && IsKeyDown(VK_MENU);
     }
 
-    private void PressMiddleClickForEts2Reset()
+    private static void SendMiddleResetForEts2()
     {
         if (!IsEts2Foreground()) return;
-        if (resetMiddleButtonDown) return;
 
         mouse_event(MOUSEEVENTF_MIDDLEDOWN, 0, 0, 0, UIntPtr.Zero);
-        resetMiddleButtonDown = true;
-        resetMiddleButtonReleaseTick = Environment.TickCount + 120;
-    }
-
-    private void ReleaseMiddleClickForEts2Reset()
-    {
-        if (!resetMiddleButtonDown) return;
-
         mouse_event(MOUSEEVENTF_MIDDLEUP, 0, 0, 0, UIntPtr.Zero);
-        resetMiddleButtonDown = false;
-    }
-
-    private static bool HasTickElapsed(int targetTick)
-    {
-        return unchecked(Environment.TickCount - targetTick) >= 0;
     }
 
     private void MoveToTopOfActiveScreen()
@@ -350,7 +327,7 @@ public sealed class Ets2ScrollOverlay : Form
     private static extern short GetAsyncKeyState(int vKey);
 
     [DllImport("user32.dll")]
-    private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, UIntPtr dwExtraInfo);
+    private static extern void mouse_event(uint dwFlags, uint dx, uint dy, int dwData, UIntPtr dwExtraInfo);
 
     [DllImport("user32.dll")]
     private static extern IntPtr GetForegroundWindow();
@@ -360,13 +337,14 @@ public sealed class Ets2ScrollOverlay : Form
 }
 "@
 
-Add-Type -TypeDefinition $source -ReferencedAssemblies "System.Windows.Forms", "System.Drawing"
+Add-Type -TypeDefinition $source -ReferencedAssemblies "System.Windows.Forms", "System.Drawing" -WarningAction SilentlyContinue
 
 if ($CompileOnly) {
     Write-Host "ETS2 scroll overlay compiled successfully."
     return
 }
 
+Write-Host "Running ETS2ScrollDrive overlay"
 [System.Windows.Forms.Application]::EnableVisualStyles()
 [System.Windows.Forms.Application]::SetCompatibleTextRenderingDefault($false)
 [System.Windows.Forms.Application]::Run([Ets2ScrollOverlay]::new())

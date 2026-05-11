@@ -34,9 +34,7 @@ The live scroll wheel value is stored by ETS2. The overlay mirrors the same logi
 
 Each wheel step changes the stored value by 3%, from full brake to full throttle. Throttle uses a squared curve, so small scroll changes are gentle and full scroll range still reaches 100%. Brake is more direct: about 25% scroll gives about 25% brake, 50% gives about 50%, and full brake still takes the full scroll range.
 
-Press `Alt` to reset throttle/brake to neutral. The overlay handles this by briefly sending the reset input that ETS2 accepts, so the stored scroll value resets in both ETS2 and the overlay.
-
-The reset is intentionally simple: there is no remembered throttle, coast mode, or separate overlay state.
+Press `Alt` to reset throttle/brake to neutral. The overlay handles this by sending a very quick middle-mouse reset pulse while `Alt` is held, then resets its own display.
 
 Do not edit controls that show as `complex` in ETS2's buttons menu. Those are custom bindings from `controls.sii`, and changing them in-game can break the scroll controls.
 
